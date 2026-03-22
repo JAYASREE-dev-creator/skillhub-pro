@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>SkillHub</title>
+
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+<style>
+
+body{
+margin:0;
+font-family:Segoe UI, Arial;
+background:#eef2f7;
+}
+
+/* SPLASH */
+
+/* SPLASH */
+
+#splash{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:linear-gradient(135deg,#2563eb,#1e40af);
+color:white;
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:9999;
+transition:opacity 0.6s ease;
+}
+
+.splash-content{
+text-align:center;
+animation:zoomIn 0.9s ease;
+}
+
+.logo{
+font-size:48px;
+font-weight:700;
+letter-spacing:1px;
+}
+
+.tagline{
+margin-top:10px;
+font-size:16px;
+opacity:0;
+animation:fadeIn 1s ease forwards;
+animation-delay:0.6s;
+}
+
+@keyframes zoomIn{
+0%{
+transform:scale(0.8);
+opacity:0;
+}
+100%{
+transform:scale(1);
+opacity:1;
+}
+}
+
+@keyframes fadeIn{
+0%{opacity:0}
+100%{opacity:1}
+}
+
+/* AUTH CONTAINER */
+
+.container{
+width:420px;
+margin:80px auto;
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+h2{
+margin-top:0;
+text-align:center;
+}
+
+.slogan{
+text-align:center;
+font-size:13px;
+color:#555;
+margin-bottom:15px;
+}
+
+input{
+width:100%;
+padding:10px;
+margin-top:10px;
+border:1px solid #ccc;
+border-radius:6px;
+}
+
+button{
+width:100%;
+padding:10px;
+margin-top:15px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+font-weight:500;
+}
+
+button:hover{
+background:#1e40af;
+}
+
+.link{
+margin-top:12px;
+text-align:center;
+cursor:pointer;
+color:#2563eb;
+font-size:14px;
+}
+
+/* DASHBOARD */
+
+.dashboard{
+padding:30px;
+max-width:1200px;
+width:100%;
+margin:auto;
+}
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+.logout{
+width:auto;
+padding:6px 14px;
+background:#e5e7eb;
+color:#333;
+font-size:13px;
+border-radius:6px;
+}
+
+/* GRID */
+
+.dashboard-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:25px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 5px 15px rgba(0,0,0,0.08);
+margin-bottom:20px;
+}
+
+/* CHAT */
+
+.chat-box{
+height:220px;
+overflow-y:auto;
+border:1px solid #ddd;
+padding:10px;
+border-radius:6px;
+background:#fafafa;
+}
+
+/* BADGE */
+
+.badge{
+display:inline-block;
+background:#f59e0b;
+color:white;
+padding:6px 14px;
+border-radius:20px;
+font-size:16px;
+margin-top:10px;
+}
+
+/* ADMIN */
+
+.admin-list{
+margin-top:10px;
+}
+
+.admin-user{
+padding:8px;
+cursor:pointer;
+border-bottom:1px solid #eee;
+font-weight:500;
+}
+
+.admin-user:hover{
+background:#f3f4f6;
+}
+
+.admin-detail{
+margin-top:20px;
+}
+
+.admin-detail img{
+width:200px;
+border-radius:6px;
+margin-top:10px;
+cursor:pointer;
+}
+
+.admin-actions{
+margin-top:15px;
+display:flex;
+gap:10px;
+}
+
+.verify-btn{
+background:#16a34a;
+padding:6px 12px;
+font-size:13px;
+width:auto;
+}
+
+.reject-btn{
+background:#dc2626;
+padding:6px 12px;
+font-size:13px;
+width:auto;
+}
+
+.hidden{
+display:none !important;
+}
+
+.skill-tag{
+display:inline-block;
+background:#2563eb;
+color:white;
+padding:4px 10px;
+border-radius:12px;
+font-size:12px;
+margin:2px;
+}
+
+/* REGISTER SPLIT LAYOUT */
+
+.register-wrapper{
+display:flex;
+min-height:100vh;
+}
+
+.register-left{
+flex:1;
+background:linear-gradient(135deg,#2563eb,#7c3aed);
+color:white;
+display:flex;
+flex-direction:column;
+justify-content:center;
+padding:60px;
+}
+
+.register-left h1{
+font-size:48px;
+margin-bottom:10px;
+}
+
+.register-left h3{
+font-weight:400;
+margin-bottom:30px;
+}
+
+.register-left p{
+font-size:18px;
+margin:6px 0;
+opacity:0.9;
+}
+
+.register-right{
+flex:1;
+display:flex;
+align-items:center;
+justify-content:center;
+background:#eef2f7;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="splash">
+<div class="splash-content">
+<div class="logo">SkillHub</div>
+<div class="tagline">Connecting Skills Worldwide</div>
+</div>
+</div>
+<!-- REGISTER -->
+
+<div id="registerPage" class="register-wrapper hidden">
+
+<div class="register-left">
+<h1>SkillHub</h1>
+<h3>Connect • Teach • Learn</h3>
+
+<p>Exchange knowledge</p>
+<p>Build real skills</p>
+<p>Grow together</p>
+
+</div>
+
+<div class="register-right">
+
+<div class="container">
+
+<h2>Create Account</h2>
+
+<input id="rname" placeholder="Name">
+<input id="remail" placeholder="Email">
+<input id="rpassword" type="password" placeholder="Password">
+
+<input id="skillsOffered" placeholder="Skills Offered">
+<input id="skillsWanted" placeholder="Skills Wanted">
+
+<label>Aadhaar</label>
+<input type="file" id="aadhaar">
+
+<label>ID Card</label>
+<input type="file" id="idcard">
+
+<button onclick="register()">Register</button>
+
+<div class="link" onclick="showPage('loginPage')">
+Already registered? Login
+</div>
+
+<div class="link" onclick="showPage('adminPage')">
+Admin Login
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- USER LOGIN -->
+
+<div id="loginPage" class="container hidden">
+
+<h2>User Login</h2>
+
+<input id="lemail" placeholder="Email">
+<input id="lpassword" type="password" placeholder="Password">
+
+<button onclick="login()">Login</button>
+
+<div class="link" onclick="showPage('registerPage')">
+Create new account
+</div>
+
+</div>
+
+<!-- ADMIN LOGIN -->
+
+<div id="adminPage" class="container hidden">
+
+<h2>Admin Login</h2>
+
+<input id="adminEmail" placeholder="Admin Email">
+<input id="adminPassword" type="password" placeholder="Password">
+
+<button onclick="adminLogin()">Login</button>
+
+<div class="link" onclick="showPage('registerPage')">
+Back
+</div>
+
+</div>
+
+<!-- USER DASHBOARD -->
+
+<div id="userDashboard" class="dashboard hidden">
+
+<div class="header">
+<h2 id="welcomeUser">Welcome</h2>
+<button class="logout" onclick="logout()">Logout</button>
+</div>
+
+<div class="dashboard-grid">
+
+<!-- LEFT COLUMN -->
+<div>
+
+<div class="card">
+<h3>Top Skill Matches</h3>
+<button onclick="getMatches()">Find Matches</button>
+<div id="matches"></div>
+</div>
+
+<div class="card">
+<h3>Incoming Requests</h3>
+<div id="incomingRequests">
+No pending requests
+</div>
+</div>
+
+<div class="card">
+<h3>Messages</h3>
+
+<select id="chatUser">
+<option>Select User</option>
+</select>
+
+<div class="chat-box" id="chatBox"></div>
+
+<input id="chatMessage" placeholder="Type message">
+
+<button onclick="sendMessage()">Send</button>
+
+</div>
+
+</div>
+
+<!-- RIGHT COLUMN -->
+<div>
+
+<div class="card">
+<h3>Schedule Session</h3>
+
+<div id="scheduleUsers">
+Request Accepted users will appear here
+</div>
+
+<div id="schedulePanel" class="hidden">
+
+<input type="datetime-local" id="sessionDate"
+style="font-size:18px;padding:12px;height:50px;width:100%;">
+
+<button class="small-btn" onclick="confirmSchedule()">Confirm Schedule</button>
+
+</div>
+
+</div>
+
+<div class="card">
+<h3>Scheduled Sessions</h3>
+<button onclick="loadSessions()">Load Sessions</button>
+<div id="sessionList"></div>
+</div>
+
+<div class="card">
+<h3>Session Statistics</h3>
+
+<p>Total Sessions: <span id="totalSessions">0</span></p>
+<p>Completed Sessions: <span id="completedSessions">0</span></p>
+
+<div class="badge" id="badgeLevel">⭐</div>
+
+</div>
+
+</div>
+
+</div> <!-- dashboard-grid -->
+</div> <!-- userDashboard -->
+
+
+<!-- ADMIN DASHBOARD -->
+
+<div id="adminDashboard" class="dashboard hidden">
+
+<div class="header">
+<h2>Welcome Admin</h2>
+<button class="logout" onclick="logout()">Logout</button>
+</div>
+
+<div class="card">
+
+<button onclick="loadAdminDashboard()">Load Pending Users</button>
+
+<div id="pendingUsers" class="admin-list"></div>
+
+<div id="adminUserDetail" class="admin-detail"></div>
+
+</div>
+
+<div class="card">
+
+<button onclick="loadAdminStats()">Load Stats</button>
+
+<div id="adminStats"></div>
+
+</div>
+
+</div>
+
+<script src="./app.js"></script>
+
+</body>
+</html>
