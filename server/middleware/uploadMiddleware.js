@@ -1,71 +1,27 @@
-const multer = require("multer")
-const path = require("path")
-const fs = require("fs")
+const multer = require("multer");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("cloudinary").v2;
 
-/* CREATE UPLOAD DIRECTORY IF NOT EXISTS */
+/* CLOUDINARY CONFIG */
 
-const uploadDir = "uploads"
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
-if(!fs.existsSync(uploadDir)){
- fs.mkdirSync(uploadDir)
-}
+/* STORAGE CONFIG */
 
-/* STORAGE CONFIGURATION */
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "skillhub_uploads",
+    resource_type: "auto", // supports pdf, images, etc
+  },
+});
 
-const storage = multer.diskStorage({
+/* MULTER SETUP */
 
- destination:(req,file,cb)=>{
-  cb(null,uploadDir)
- },
+const upload = multer({ storage });
 
- filename:(req,file,cb)=>{
-
-  const uniqueName =
-   file.fieldname +
-   "_" +
-   Date.now() +
-   "_" +
-   Math.round(Math.random()*1E9) +
-   path.extname(file.originalname)
-
-  cb(null,uniqueName)
-
- }
-
-})
-
-/* FILE TYPE VALIDATION */
-
-const fileFilter = (req,file,cb)=>{
-
- const allowedTypes = /jpeg|jpg|png|pdf/
-
- const extname = allowedTypes.test(
-  path.extname(file.originalname).toLowerCase()
- )
-
- const mimetype = allowedTypes.test(file.mimetype)
-
- if(extname && mimetype){
-  cb(null,true)
- }else{
-  cb(new Error("Only JPG, PNG, or PDF files are allowed"))
- }
-
-}
-
-/* MULTER INSTANCE */
-
-const upload = multer({
-
- storage:storage,
-
- limits:{
-  fileSize:2 * 1024 * 1024   // 2MB
- },
-
- fileFilter:fileFilter
-
-})
-
-module.exports = upload
+module.exports = upload;

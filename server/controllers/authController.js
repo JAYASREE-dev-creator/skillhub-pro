@@ -37,12 +37,14 @@ const registerUser = async (req,res)=>{
   if(req.files){
 
    if(req.files.aadhaarFile && req.files.aadhaarFile.length>0){
-    aadhaarFile = req.files.aadhaarFile[0].filename
+    aadhaarFile = req.files.aadhaarFile[0].path
    }
 
    if(req.files.idCardFile && req.files.idCardFile.length>0){
-    idCardFile = req.files.idCardFile[0].filename
+    idCardFile = req.files.idCardFile[0].path
    }
+   console.log("AADHAAR URL:", aadhaarFile)
+console.log("ID CARD URL:", idCardFile)
 
   }
 
