@@ -18,13 +18,13 @@ const registerUser = async (req,res)=>{
  try{
 
   let { name,email,password,skillsOffered,skillsWanted } = req.body
+  console.log("EMAIL RECEIVED:", email)
 
   if(!name || !email || !password){
    return res.status(400).json({message:"All fields required"})
   }
 
-  email = email.toLowerCase()
-
+email = email.trim().toLowerCase()
   const existingUser = await User.findOne({email})
 
   if(existingUser){
@@ -107,9 +107,15 @@ const loginUser = async (req,res)=>{
 
   /* CHECK VERIFICATION FIRST */
 
-if(user.verificationStatus !== "verified"){
+if(user.verificationStatus === "pending"){
  return res.status(403).json({
-  message:"Your account is pending admin verification"
+  message:"Your account is under review. Please wait up to 24 hours."
+ })
+}
+
+if(user.verificationStatus === "rejected"){
+ return res.status(403).json({
+  message:"Your account has been rejected by admin."
  })
 }
 
