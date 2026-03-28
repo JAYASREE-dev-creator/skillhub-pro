@@ -11,10 +11,11 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: (req, file) => ({
-    folder: "skillhub_uploads",
-    resource_type: "auto",
-    public_id: Date.now() + "-" + file.originalname,
-  }),
+  folder: "skillhub_uploads",
+  resource_type: "auto",
+  type: "upload",   // 🔥 ADD THIS LINE
+  public_id: Date.now() + "-" + file.originalname,
+}),
 });
 
 const upload = multer({ storage });
