@@ -280,13 +280,13 @@ detail.innerHTML=`
 <p><b>Skills Wanted:</b> ${user.skillsWanted.join(", ")}</p>
 
 <h4>Aadhaar</h4>
-<a href="${API}/uploads/${user.aadhaarFile}" target="_blank">
-<img src="${API}/uploads/${user.aadhaarFile}" width="200">
+<a href="${user.aadhaarFile}" target="_blank">
+<img src="${user.aadhaarFile}" width="200">
 </a>
 
 <h4>ID Card</h4>
-<a href="${API}/uploads/${user.idCardFile}" target="_blank">
-<img src="${API}/uploads/${user.idCardFile}" width="200">
+<a href="${user.idCardFile}" target="_blank">
+<img src="${user.idCardFile}" width="200">
 </a>
 
 <br><br>
